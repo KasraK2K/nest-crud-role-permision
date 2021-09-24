@@ -11,14 +11,14 @@ import { CreateResDto } from './dto/response/create-res.dto';
   model: {
     type: CompanyEntity,
   },
-  routes: {
-    exclude: ['getOneBase'],
-  },
   dto: {
     create: CreateCompanyDto,
   },
   serialize: {
     create: CreateResDto,
+  },
+  routes: {
+    exclude: ['getOneBase'],
   },
 })
 @Controller('company')
