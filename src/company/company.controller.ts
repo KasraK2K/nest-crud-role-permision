@@ -4,6 +4,7 @@ import { Controller } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Crud } from '@nestjsx/crud';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { CreateResDto } from './dto/response/create-res.dto';
 
 @ApiTags('Company')
 @Crud({
@@ -15,6 +16,9 @@ import { CreateCompanyDto } from './dto/create-company.dto';
   },
   dto: {
     create: CreateCompanyDto,
+  },
+  serialize: {
+    create: CreateResDto,
   },
 })
 @Controller('company')
