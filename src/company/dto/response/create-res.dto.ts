@@ -1,7 +1,9 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class CreateResDto {
+  @ApiProperty({ type: String, example: 'ias' })
   @Expose()
   name: string;
 
