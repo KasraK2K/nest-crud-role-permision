@@ -8,7 +8,7 @@ import {
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     try {
       return await this.save(createUserDto);
     } catch (error) {

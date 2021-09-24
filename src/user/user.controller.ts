@@ -11,14 +11,32 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { plainToClass } from 'class-transformer';
+import { ResCreateUserDto } from './dto/response/res-create-user.dto';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
+  @ApiResponse({
+    schema: {
+      example: {
+        name: 'ali',
+      },
+    },
+    status: 201,
+    description: 'This api should create new user',
+  })
   @Post()
-  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.service.createUser(createUserDto);
+  async createUser(
+    @Body(ValidationPipe) createUserDto: CreateUserDto,
+  ): Promise<ResCreateUserDto> {
+    return plainToClass(
+      ResCreateUserDto,
+      await this.service.createUser(createUserDto),
+    );
   }
 
   @Get()
