@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -9,15 +10,19 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity('Users')
-@Unique(['first_name'])
+@Unique(['username'])
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  first_name: string;
+  username: string;
+
+  @Column()
+  password: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -30,4 +35,21 @@ export class UserEntity extends BaseEntity {
 
   @VersionColumn()
   version: number;
+
+  // ────────────────────────────────────────────────────────────────────
+  //   :::::: F U N C T I O N S : :  :   :    :     :        :          :
+  // ────────────────────────────────────────────────────────────────────
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await this.hash(this.password);
+  }
+
+  async hash(argument: string) {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(argument, salt);
+  }
+
+  async comparePassword(password: string) {
+    return await bcrypt.compare(password, this.password);
+  }
 }

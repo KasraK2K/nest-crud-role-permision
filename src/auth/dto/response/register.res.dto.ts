@@ -1,9 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class ResCreateUserDto {
+export class RegisterResDto {
   @Expose()
-  first_name: string;
-
-  id: number;
+  username: string;
 }

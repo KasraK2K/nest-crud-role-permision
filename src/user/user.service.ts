@@ -1,11 +1,11 @@
 import { UserRepository } from './user.repository';
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { UpdateResult, DeleteResult } from 'typeorm';
+import { DeleteResult } from 'typeorm';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 
 @Injectable()
 export class UserService {
@@ -15,23 +15,23 @@ export class UserService {
 
   private readonly logger = new Logger(UserService.name);
 
-  createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.repository.createUser(createUserDto);
+  createUser(registerDto: RegisterDto): Promise<UserEntity> {
+    return this.repository.createUser(registerDto);
   }
 
   getAllUser(): Promise<UserEntity[]> {
     return this.repository.getAllUser();
   }
 
-  getOneUser(userId: number): Promise<UserEntity> {
-    return this.repository.getOneUser(userId);
+  getOneUser(username: string): Promise<UserEntity> {
+    return this.repository.getOneUser(username);
   }
 
   updateUser(
-    userId: number,
+    username: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return this.repository.updateUser(userId, updateUserDto);
+  ): Promise<UserEntity> {
+    return this.repository.updateUser(username, updateUserDto);
   }
 
   softRemoveUser(userId: number): Promise<DeleteResult> {

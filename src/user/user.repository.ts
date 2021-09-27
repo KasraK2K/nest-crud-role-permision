@@ -1,22 +1,20 @@
-import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterDto } from './../auth/dto/register.dto';
 import { UserEntity } from './entities/user.entity';
-import {
-  EntityRepository,
-  Repository,
-  UpdateResult,
-  DeleteResult,
-} from 'typeorm';
+import { EntityRepository, Repository, DeleteResult } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as _ from 'lodash';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async createUser(registerDto: RegisterDto): Promise<UserEntity> {
     try {
-      return await this.save(createUserDto);
+      const user = new UserEntity();
+      Object.assign(user, registerDto);
+      return await this.save(user);
     } catch (error) {
       if (error.code === '23505')
         throw new ConflictException('This user is already exist.');
@@ -32,15 +30,19 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async getOneUser(userId: number): Promise<UserEntity> {
-    return await this.findOne(userId);
+  async getOneUser(username: string): Promise<UserEntity> {
+    return await this.findOne({ username });
   }
 
   async updateUser(
-    userId: number,
+    username: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return await this.update(userId, updateUserDto);
+  ): Promise<UserEntity> {
+    const { password } = updateUserDto;
+    const user = await this.getOneUser(username);
+    _.assign(user, updateUserDto);
+    if (password) user.password = await user.hash(password);
+    return await this.save(user);
   }
 
   async softRemoveUser(userId: number): Promise<DeleteResult> {
