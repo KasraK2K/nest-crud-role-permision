@@ -7,28 +7,22 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer';
 import { ResCreateUserDto } from './dto/response/res-create-user.dto';
+import { UserEntity } from './entities/user.entity';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
-  @ApiResponse({
-    schema: {
-      example: {
-        name: 'ali',
-      },
-    },
-    status: 201,
-    description: 'This api should create new user',
-  })
   @Post()
   async createUser(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
@@ -40,22 +34,29 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.service.findAll();
+  getAllUser(): Promise<UserEntity[]> {
+    return this.service.getAllUser();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(+id);
+  @Get(':userId')
+  getOneUser(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<UserEntity> {
+    return this.service.getOneUser(userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.service.update(+id, updateUserDto);
+  @Patch(':userId')
+  updateUser(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    return this.service.updateUser(userId, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(+id);
+  @Delete(':userId')
+  softRemoveUser(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<DeleteResult> {
+    return this.service.softRemoveUser(userId);
   }
 }

@@ -5,6 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
+import { UpdateResult, DeleteResult } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -14,23 +15,26 @@ export class UserService {
 
   private readonly logger = new Logger(UserService.name);
 
-  async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
-    return await this.repository.createUser(createUserDto);
+  createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+    return this.repository.createUser(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  getAllUser(): Promise<UserEntity[]> {
+    return this.repository.getAllUser();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  getOneUser(userId: number): Promise<UserEntity> {
+    return this.repository.getOneUser(userId);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    return this.repository.updateUser(userId, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  softRemoveUser(userId: number): Promise<DeleteResult> {
+    return this.repository.softRemoveUser(userId);
   }
 }
