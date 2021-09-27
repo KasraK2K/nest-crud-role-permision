@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import * as config from 'config';
+
+const userConfig = config.get('user');
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -20,7 +23,7 @@ export class UpdateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Length(6, 18)
+  @Length(userConfig.password.min, userConfig.password.max)
   @IsOptional()
   password: string;
 }

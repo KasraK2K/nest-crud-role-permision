@@ -1,0 +1,3 @@
+server:
+  port: 3500
+  logger: ['error', 'warn', 'debug', 'log', 'verbose']

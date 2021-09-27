@@ -1,0 +1,9 @@
+server:
+  port: 3000
+  logger: ['error', 'warn']
+  prefix: '/api/v1'
+
+user:
+  password:
+    min: 6
+    max: 18

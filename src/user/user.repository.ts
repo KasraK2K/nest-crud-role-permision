@@ -38,10 +38,8 @@ export class UserRepository extends Repository<UserEntity> {
     username: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity> {
-    const { password } = updateUserDto;
     const user = await this.getOneUser(username);
     _.assign(user, updateUserDto);
-    if (password) user.password = await user.hash(password);
     return await this.save(user);
   }
 

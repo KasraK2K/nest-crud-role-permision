@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -10,8 +11,11 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UserPermissionsEnum } from 'src/auth/enums/permission.enum';
+import * as config from 'config';
+
+const userConfig = config.get('user');
 
 @Entity('Users')
 @Unique(['username'])
@@ -51,16 +55,18 @@ export class UserEntity extends BaseEntity {
   //   :::::: F U N C T I O N S : :  :   :    :     :        :          :
   // ────────────────────────────────────────────────────────────────────
   @BeforeInsert()
-  async hashPassword() {
-    this.password = await this.hash(this.password);
+  @BeforeUpdate()
+  hashPassword() {
+    if (this.password.length <= userConfig.password.max)
+      this.password = this.hash(this.password);
   }
 
-  async hash(argument: string) {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(argument, salt);
+  hash(argument: string) {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(argument, salt);
   }
 
-  async comparePassword(password: string) {
-    return await bcrypt.compare(password, this.password);
+  comparePassword(password: string) {
+    return bcrypt.compareSync(password, this.password);
   }
 }
