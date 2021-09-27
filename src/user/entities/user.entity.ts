@@ -11,6 +11,7 @@ import {
   VersionColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserPermissionsEnum } from 'src/auth/enums/permission.enum';
 
 @Entity('Users')
 @Unique(['username'])
@@ -23,6 +24,16 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({
+    array: true,
+    enum: UserPermissionsEnum,
+    default: [UserPermissionsEnum.FIND, UserPermissionsEnum.FIND_ONE],
+  })
+  permissions: UserPermissionsEnum;
+
+  @Column({ default: true })
+  active: boolean;
 
   @CreateDateColumn()
   created_at: Date;

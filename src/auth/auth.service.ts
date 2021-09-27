@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserType } from 'src/common/enums/general.enum';
 import { RegisterDto } from './dto/register.dto';
+import { IPayload } from './interfaces/payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
     const user = await this.validateUser(username, password);
     if (!user)
       throw new ForbiddenException('Your username or password is wrong.');
-    const payload = { username, type: UserType.USER };
+    const payload: IPayload = { username, role: UserType.USER };
     return {
       access_token: this.jwtService.sign(payload),
     };
